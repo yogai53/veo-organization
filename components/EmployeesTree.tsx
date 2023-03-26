@@ -39,10 +39,10 @@ export default function EmployeesTree({
         onClick={() => setShowChildren((showChildren) => !showChildren)}
       >
         <div className="flex">
-          <div
+          {/* <div
             className="border-l border-solid border-slate-500"
             style={{ marginLeft: 40 }}
-          ></div>
+          ></div> */}
           {Array.from({ length: depth })
             .fill(1)
             .map((d, i) => (
