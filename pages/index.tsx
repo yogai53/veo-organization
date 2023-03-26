@@ -1,8 +1,11 @@
-import { CreateNodeModal } from "@/components";
-import EmployeesTree from "@/components/EmployeesTree";
+import { CreateNodeModal, EmployeesTree } from "@/components";
+import CreateEmployeeForm from "@/components/CreateEmployeeForm";
+import { nodeCreateSchema } from "@/pages/api/nodes";
 import { Employee, PrismaClient } from "@prisma/client";
-import type { GetServerSideProps, NextApiRequest, NextApiResponse } from "next";
+import type { GetServerSideProps } from "next";
 import React from "react";
+import { RecoilRoot } from "recoil";
+import * as yup from "yup";
 
 interface IProps {
   employees: Employee[];
@@ -30,17 +33,26 @@ export default function Home({ employees }: IProps) {
     [employees]
   );
 
+  const onSubmit = (payload: yup.InferType<typeof nodeCreateSchema>) => {
+    console.log({ payload });
+  };
+
   return (
-    <div className="p-5">
-      {roots.map((root) => (
-        <div
-          key={root.id}
-          className="p-5 border-solid border-2 border-slate-500 my-5"
-        >
-          <EmployeesTree root={root.id} employeeHash={employeeHash} />
-        </div>
-      ))}
-    </div>
+    <RecoilRoot>
+      <div className="p-5">
+        {roots.map((root) => (
+          <div
+            key={root.id}
+            className="p-5 border-solid border-2 border-slate-500 my-5"
+          >
+            <EmployeesTree root={root.id} employeeHash={employeeHash} />
+          </div>
+        ))}
+        <CreateNodeModal>
+          <CreateEmployeeForm handleSubmitPayload={onSubmit} />
+        </CreateNodeModal>
+      </div>
+    </RecoilRoot>
   );
 }
 
