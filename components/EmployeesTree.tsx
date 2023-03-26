@@ -27,11 +27,14 @@ export default function EmployeesTree({
     showCreateEmployeeModalAtom
   );
   const setcurrentEmployeeAtom = useSetRecoilState(currentEmployeeAtom);
+
+  const employee = employeeHash[root];
+  const { department, domain } = employee.extra as Prisma.JsonObject;
   return (
     <>
       <div
-        className={`p-3 h-16 rounded-md mt-3 cursor-pointer flex items-center gap-5`}
-        style={{ marginLeft: depth * 50 }}
+        className={`p-1 h-15 rounded-md cursor-pointer flex items-center gap-5`}
+        style={{ marginLeft: depth * 40 }}
         onMouseEnter={() => setShowAddChild(true)}
         onMouseLeave={() => setShowAddChild(false)}
       >
@@ -39,26 +42,36 @@ export default function EmployeesTree({
           className="flex items-center"
           onClick={() => setShowChildren((showChildren) => !showChildren)}
         >
-          {employeeHash[root].employees.length > 0 && (
-            <div className="text-3xl mr-2">{showChildren ? "-" : "+"}</div>
+          {employee.employees.length > 0 ? (
+            <div className="text-xl mr-2">{showChildren ? "-" : "+"}</div>
+          ) : (
+            <div className="ml-5"></div>
           )}
-          <div>{employeeHash[root].name}</div>
+          <div>
+            <div>{employee.name}</div>
+            <div className="flex">
+              <small className="text-slate-500">
+                <>{employee.role} | </>
+                <>{employee.role == "MANAGER" ? department : domain}</>
+              </small>
+              {showAddChild && (
+                <button
+                  className="px-2 flex items-center rounded-md hover:bg-slate-300 ml-5 text-sm border"
+                  onClick={(e: any) => {
+                    e.stopPropagation();
+                    setShowCreateEmployeeModal(true);
+                    setcurrentEmployeeAtom(employee);
+                  }}
+                >
+                  Add Child
+                </button>
+              )}
+            </div>
+          </div>
         </div>
-        {showAddChild && (
-          <button
-            className="border px-2 flex items-center"
-            onClick={(e: any) => {
-              setShowCreateEmployeeModal(true);
-              setcurrentEmployeeAtom(employeeHash[root]);
-            }}
-          >
-            <div className="text-3xl mr-2">+</div>
-            <div>Add Child</div>
-          </button>
-        )}
       </div>
       {showChildren &&
-        employeeHash[root].employees.map((employee) => (
+        employee.employees.map((employee) => (
           <React.Fragment key={employee.id}>
             {employeeHash[employee.id].employees && (
               <EmployeesTree

@@ -1,8 +1,13 @@
 import { nodeCreateSchema } from "@/pages/api/nodes";
-import { Employee } from "@prisma/client";
+import {
+  currentEmployeeAtom,
+  showCreateEmployeeModalAtom,
+} from "@/recoil/atom";
+import axios from "axios";
+import { useRouter } from "next/router";
 import React from "react";
+import { useRecoilValue, useSetRecoilState } from "recoil";
 import * as yup from "yup";
-
 interface IProps {
   handleSubmitPayload: (
     payload: yup.InferType<typeof nodeCreateSchema>
@@ -10,6 +15,7 @@ interface IProps {
 }
 
 export default function CreateEmployeeForm({ handleSubmitPayload }: IProps) {
+  const router = useRouter();
   const [form, setForm] = React.useState<
     yup.InferType<typeof nodeCreateSchema>
   >({
@@ -21,12 +27,26 @@ export default function CreateEmployeeForm({ handleSubmitPayload }: IProps) {
     },
   });
   const [error, setError] = React.useState<yup.ValidationError | null>(null);
-
+  const currentEmployee = useRecoilValue(currentEmployeeAtom);
+  const setShowCreateEmployeeModal = useSetRecoilState(
+    showCreateEmployeeModalAtom
+  );
   const handleSubmit = async () => {
+    if (!currentEmployee) return;
     try {
       const createEmployeeValidation = await nodeCreateSchema.validate(form);
       setError(null);
-      handleSubmitPayload(createEmployeeValidation);
+
+      axios
+        .post("/api/nodes", {
+          ...createEmployeeValidation,
+          parentId: currentEmployee.id,
+        })
+        .then((r) => {
+          setShowCreateEmployeeModal(false);
+          router.push(router.asPath);
+        })
+        .catch((e) => alert("Something went wrong"));
     } catch (error: any) {
       if (error instanceof yup.ValidationError) {
         setError(error);
@@ -163,6 +183,7 @@ export default function CreateEmployeeForm({ handleSubmitPayload }: IProps) {
           <button
             className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
             type="button"
+            onClick={() => setShowCreateEmployeeModal(false)}
           >
             Cancel
           </button>

@@ -3,6 +3,7 @@ import CreateEmployeeForm from "@/components/CreateEmployeeForm";
 import { nodeCreateSchema } from "@/pages/api/nodes";
 import { Employee, PrismaClient } from "@prisma/client";
 import type { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import React from "react";
 import { RecoilRoot } from "recoil";
 import * as yup from "yup";
@@ -21,6 +22,7 @@ const buildEmployeeHash = (employees: Employee[]) => {
 };
 
 export default function Home({ employees }: IProps) {
+  const router = useRouter();
   React.useState<Employee["id"]>();
 
   const employeeHash = React.useMemo(
@@ -34,7 +36,7 @@ export default function Home({ employees }: IProps) {
   );
 
   const onSubmit = (payload: yup.InferType<typeof nodeCreateSchema>) => {
-    console.log({ payload });
+    router.push(router.asPath);
   };
 
   return (
