@@ -2,18 +2,17 @@ import {
   currentEmployeeAtom,
   showCreateEmployeeModalAtom,
 } from "@/recoil/atom";
+import { IEmployeeDetails } from "@/types/employee";
 import { Prisma } from "@prisma/client";
 import React from "react";
 import { useSetRecoilState } from "recoil";
 
 interface IProps {
   employeeHash: {
-    [key: number]: Prisma.EmployeeGetPayload<{
-      include: { employees: { select: { id: true } } };
-    }>;
+    [key: number]: IEmployeeDetails;
   };
   root: number;
-  depth: number;
+  depth?: number;
 }
 
 export default function EmployeesTree({

@@ -27,8 +27,6 @@ export const nodeCreateSchema = yup.object({
   parentId: yup.number(),
 });
 
-type INode = yup.InferType<typeof nodeCreateSchema>;
-
 interface ISuccess {
   newEmployee: Employee;
 }

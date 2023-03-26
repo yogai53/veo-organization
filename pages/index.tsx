@@ -1,19 +1,20 @@
 import { CreateNodeModal, EmployeesTree } from "@/components";
 import CreateEmployeeForm from "@/components/CreateEmployeeForm";
-import { nodeCreateSchema } from "@/pages/api/nodes";
-import { Employee, PrismaClient } from "@prisma/client";
+import { IEmployeeDetails } from "@/types/employee";
+import { PrismaClient } from "@prisma/client";
 import type { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import React from "react";
 import { RecoilRoot } from "recoil";
-import * as yup from "yup";
 
 interface IProps {
-  employees: Employee[];
+  employees: IEmployeeDetails[];
 }
 
-const buildEmployeeHash = (employees: Employee[]) => {
-  let employeeHash: { [key: number]: Employee } = {};
+const buildEmployeeHash = (employees: IEmployeeDetails[]) => {
+  let employeeHash: {
+    [key: number]: IEmployeeDetails;
+  } = {};
   for (const employee of employees) {
     employeeHash[employee.id] = employee;
   }
@@ -23,7 +24,6 @@ const buildEmployeeHash = (employees: Employee[]) => {
 
 export default function Home({ employees }: IProps) {
   const router = useRouter();
-  React.useState<Employee["id"]>();
 
   const employeeHash = React.useMemo(
     () => buildEmployeeHash(employees),
@@ -35,7 +35,7 @@ export default function Home({ employees }: IProps) {
     [employees]
   );
 
-  const onSubmit = (payload: yup.InferType<typeof nodeCreateSchema>) => {
+  const onSubmit = () => {
     router.push(router.asPath);
   };
 
@@ -45,7 +45,7 @@ export default function Home({ employees }: IProps) {
         {roots.map((root) => (
           <div
             key={root.id}
-            className="p-5 border-solid border-2 border-slate-500 my-5"
+            className="p-5 border-solid border border-slate-500 my-5"
           >
             <EmployeesTree root={root.id} employeeHash={employeeHash} />
           </div>
@@ -60,16 +60,16 @@ export default function Home({ employees }: IProps) {
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const prisma = new PrismaClient({
-    log: [
-      {
-        emit: "event",
-        level: "query",
-      },
-    ],
+    // log: [
+    //   {
+    //     emit: "event",
+    //     level: "query",
+    //   },
+    // ],
   });
-  prisma.$on("query", async (e) => {
-    console.log(`${e.query} ${e.params}`);
-  });
+  // prisma.$on("query", async (e) => {
+  //   console.log(`${e.query} ${e.params}`);
+  // });
   const employees = await prisma.employee.findMany({
     include: { employees: { select: { id: true } } },
   });

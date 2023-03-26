@@ -3,22 +3,18 @@ import {
   currentEmployeeAtom,
   showCreateEmployeeModalAtom,
 } from "@/recoil/atom";
+import { IEmployeeForm } from "@/types/employee";
 import axios from "axios";
 import { useRouter } from "next/router";
 import React from "react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import * as yup from "yup";
 interface IProps {
-  handleSubmitPayload: (
-    payload: yup.InferType<typeof nodeCreateSchema>
-  ) => void;
+  handleSubmitPayload: () => void;
 }
 
 export default function CreateEmployeeForm({ handleSubmitPayload }: IProps) {
-  const router = useRouter();
-  const [form, setForm] = React.useState<
-    yup.InferType<typeof nodeCreateSchema>
-  >({
+  const [form, setForm] = React.useState<IEmployeeForm>({
     name: "",
     role: "",
     extra: {
@@ -44,7 +40,7 @@ export default function CreateEmployeeForm({ handleSubmitPayload }: IProps) {
         })
         .then((r) => {
           setShowCreateEmployeeModal(false);
-          router.push(router.asPath);
+          handleSubmitPayload();
         })
         .catch((e) => alert("Something went wrong"));
     } catch (error: any) {
