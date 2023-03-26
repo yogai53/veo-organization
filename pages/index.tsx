@@ -3,6 +3,7 @@ import CreateEmployeeForm from "@/components/CreateEmployeeForm";
 import { IEmployeeDetails } from "@/types/employee";
 import { PrismaClient } from "@prisma/client";
 import type { GetServerSideProps } from "next";
+import Head from "next/head";
 import { useRouter } from "next/router";
 import React from "react";
 import { RecoilRoot } from "recoil";
@@ -40,21 +41,26 @@ export default function Home({ employees }: IProps) {
   };
 
   return (
-    <RecoilRoot>
-      <div className="p-5">
-        {roots.map((root) => (
-          <div
-            key={root.id}
-            className="p-5 border-solid border border-slate-500 my-5"
-          >
-            <EmployeesTree root={root.id} employeeHash={employeeHash} />
-          </div>
-        ))}
-        <CreateNodeModal>
-          <CreateEmployeeForm handleSubmitPayload={onSubmit} />
-        </CreateNodeModal>
-      </div>
-    </RecoilRoot>
+    <>
+      <Head>
+        <title>Veo Organization</title>
+      </Head>
+      <RecoilRoot>
+        <div className="p-5">
+          {roots.map((root) => (
+            <div
+              key={root.id}
+              className="p-5 border-solid border border-slate-500 my-5"
+            >
+              <EmployeesTree root={root.id} employeeHash={employeeHash} />
+            </div>
+          ))}
+          <CreateNodeModal>
+            <CreateEmployeeForm handleSubmitPayload={onSubmit} />
+          </CreateNodeModal>
+        </div>
+      </RecoilRoot>
+    </>
   );
 }
 

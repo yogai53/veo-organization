@@ -99,7 +99,7 @@ export default function CreateEmployeeForm({ handleSubmitPayload }: IProps) {
               >
                 <option value="">Select</option>
                 <option value="MANAGER">MANAGER</option>
-                <option value="DEVELOPER">DEVERLOPER</option>
+                <option value="DEVELOPER">DEVELOPER</option>
               </select>
               <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
                 <svg
