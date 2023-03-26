@@ -32,30 +32,34 @@ export default function EmployeesTree({
   return (
     <>
       <div
-        className={`p-1 h-15 rounded-md cursor-pointer flex items-center gap-5`}
-        style={{ marginLeft: depth * 40 }}
+        className={`h-15 cursor-pointer flex items-center gap-5 `}
+        // style={{ marginLeft: depth * 40 }}
         onMouseEnter={() => setShowAddChild(true)}
         onMouseLeave={() => setShowAddChild(false)}
+        onClick={() => setShowChildren((showChildren) => !showChildren)}
       >
-        <div
-          className="flex items-center"
-          onClick={() => setShowChildren((showChildren) => !showChildren)}
-        >
-          {employee.employees.length > 0 ? (
-            <div className="text-xl mr-2">{showChildren ? "-" : "+"}</div>
-          ) : (
-            <div className="ml-5"></div>
-          )}
+        <div className="flex">
+          <div
+            className="border-l border-solid border-slate-500"
+            style={{ marginLeft: 40 }}
+          ></div>
+          {Array.from({ length: depth })
+            .fill(1)
+            .map((d, i) => (
+              <div
+                className={
+                  i < depth - 1 ? `border-l border-solid border-slate-500` : ""
+                }
+                style={{ marginLeft: 60 }}
+                key={i}
+              ></div>
+            ))}
           <div>
-            <div>{employee.name}</div>
-            <div className="flex">
-              <small className="text-slate-500">
-                <>{employee.role} | </>
-                <>{employee.role == "MANAGER" ? department : domain}</>
-              </small>
+            <div className="flex items-center">
+              <div>{employee.name}</div>
               {showAddChild && (
                 <button
-                  className="px-2 flex items-center rounded-md hover:bg-slate-300 ml-5 text-sm border"
+                  className="flex items-center rounded-md hover:bg-slate-300 ml-5 text-sm border"
                   onClick={(e: any) => {
                     e.stopPropagation();
                     setShowCreateEmployeeModal(true);
@@ -65,6 +69,12 @@ export default function EmployeesTree({
                   Add Child
                 </button>
               )}
+            </div>
+            <div className="flex h-7 items-center">
+              <small className="text-slate-500">
+                <>{employee.role} | </>
+                <>{employee.role == "MANAGER" ? department : domain}</>
+              </small>
             </div>
           </div>
         </div>
